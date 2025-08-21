@@ -35,13 +35,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         billing_period: {
           type: DataTypes.STRING,
-          allowNull: false,
-          comment: 'Format: YYYY-MM for the billing month'
+          allowNull: false
         },
         metadata: {
           type: DataTypes.JSON,
-          allowNull: true,
-          comment: 'Additional usage context/details'
+          allowNull: true
         }
       },
       {

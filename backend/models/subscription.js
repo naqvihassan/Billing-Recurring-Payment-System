@@ -55,8 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         monthly_fee_snapshot: {
           type: DataTypes.DECIMAL(10, 2),
-          allowNull: false,
-          comment: 'Snapshot of plan fee at subscription time'
+          allowNull: false
         }
       },
       {
@@ -80,8 +79,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "subscriptionId",
         as: "usages"
       });
-      
-      // Removed Transaction association as Transaction model is not defined
     };
   
     return Subscription;

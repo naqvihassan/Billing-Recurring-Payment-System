@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/authContext";
-import axios from "../api/axios";
+import { AuthContext } from "../context/authContext";
+import api from "../api/axios";
 
 export default function Plans() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     fetchPlans();
@@ -16,11 +16,10 @@ export default function Plans() {
   const fetchPlans = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/plans");
+      const response = await api.get("/user/plans");
       setPlans(response.data);
     } catch (err) {
       setError("Failed to load plans");
-      console.error("Error fetching plans:", err);
     } finally {
       setLoading(false);
     }
@@ -54,7 +53,6 @@ export default function Plans() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Choose Your Plan
@@ -64,11 +62,9 @@ export default function Plans() {
         </p>
       </div>
 
-      {/* Plans Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         {plans.map((plan) => (
           <div key={plan.id} className="card hover:shadow-xl transition-shadow duration-300">
-            {/* Plan Header */}
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
               <div className="text-4xl font-bold text-blue-600 mb-1">
@@ -78,38 +74,25 @@ export default function Plans() {
               <p className="text-gray-600">Billed monthly</p>
             </div>
 
-            {/* Features List */}
             <div className="mb-8">
               <h4 className="font-semibold text-gray-900 mb-4">Included Features:</h4>
               <ul className="space-y-3">
-                {plan.Features?.map((feature) => {
-                  const planFeature = feature.PlanFeature;
-                  return (
-                    <li key={feature.id} className="flex items-start">
-                      <svg className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">{feature.name}</div>
-                        <div className="text-sm text-gray-600">
-                          {planFeature?.included_units || 0} {feature.unit_type || 'units'} included
-                          {planFeature?.overage_unit_price && planFeature.overage_unit_price > 0 && (
-                            <span className="text-blue-600">
-                              , ${planFeature.overage_unit_price}/unit overage
-                            </span>
-                          )}
-                        </div>
-                        {feature.description && (
-                          <div className="text-xs text-gray-500 mt-1">{feature.description}</div>
-                        )}
+                {plan.Features?.map((feature) => (
+                  <li key={feature.id} className="flex items-start">
+                    <svg className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">{feature.name}</div>
+                      <div className="text-sm text-gray-600">
+                        ${Number(feature.unit_price).toFixed(2)} per unit • max {feature.max_unit_limit} units
                       </div>
-                    </li>
-                  );
-                })}
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* CTA Button */}
             <div className="text-center">
               {user ? (
                 <Link
@@ -131,7 +114,6 @@ export default function Plans() {
         ))}
       </div>
 
-      {/* Additional Info */}
       <div className="text-center">
         <div className="bg-gray-50 rounded-xl p-8 max-w-4xl mx-auto">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">

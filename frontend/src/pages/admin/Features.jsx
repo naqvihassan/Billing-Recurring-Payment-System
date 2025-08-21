@@ -78,7 +78,6 @@ export default function Features() {
         data.sort((a, b) => Number(b.unit_price) - Number(a.unit_price));
         break;
       default:
-        // createdAtDesc if available, otherwise leave as-is
         break;
     }
     return data;

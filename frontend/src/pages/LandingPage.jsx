@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/authContext";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
 
 export default function LandingPage() {
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="container mx-auto px-4 py-12">
-      {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className="text-5xl font-bold text-gray-900 mb-6">
           Welcome to{" "}
@@ -36,7 +36,6 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         <div className="text-center">
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -69,7 +68,6 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* CTA Section */}
       <div className="text-center bg-gray-50 rounded-2xl p-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
           Ready to get started?

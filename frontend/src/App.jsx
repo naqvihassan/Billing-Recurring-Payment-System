@@ -1,6 +1,9 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthProvider, AuthContext } from "./context/authContext";
+import LandingPage from "./pages/LandingPage";
+import Plans from "./pages/Plans";
+import Subscribe from "./pages/Subscribe";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/user/Profile";
@@ -20,7 +23,6 @@ function NavBar() {
   const userMenuRef = useRef(null);
   const adminDropdownRef = useRef(null);
 
-  // Close dropdowns when clicking outside (use click to avoid interfering with link navigation)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -34,7 +36,6 @@ function NavBar() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  // Close menus on route change
   useEffect(() => {
     setMobileMenuOpen(false);
     setAdminDropdownOpen(false);
@@ -86,7 +87,6 @@ function NavBar() {
     <nav className="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-200/50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 group">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 group-hover:from-blue-600 group-hover:to-purple-700 transition-all duration-200">
@@ -100,7 +100,6 @@ function NavBar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex items-center gap-4">
               {user ? (
@@ -113,53 +112,58 @@ function NavBar() {
                   </NavItem>
                   
                   {user.role === "admin" ? (
-                    <div className="relative" ref={adminDropdownRef}>
-                      <button
-                        className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
-                        onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
-                      >
-                        Admin
-                        <svg className={`ml-1 h-4 w-4 ${adminDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                      
-                      {adminDropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow border border-gray-200 py-1 z-50">
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => {
-                              setAdminDropdownOpen(false);
-                              navigate('/admin/dashboard');
-                            }}
-                          >
-                            Dashboard
-                          </button>
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => {
-                              setAdminDropdownOpen(false);
-                              navigate('/admin/features');
-                            }}
-                          >
-                            Features
-                          </button>
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => {
-                              setAdminDropdownOpen(false);
-                              navigate('/admin/plans');
-                            }}
-                          >
-                            Plans
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <>
+                      <Link to="/user/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                        Dashboard
+                      </Link>
+                      <div className="relative" ref={adminDropdownRef}>
+                        <button
+                          className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+                          onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
+                        >
+                          Admin
+                          <svg className={`ml-1 h-4 w-4 ${adminDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        
+                        {adminDropdownOpen && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow border border-gray-200 py-1 z-50">
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setAdminDropdownOpen(false);
+                                navigate('/admin/dashboard');
+                              }}
+                            >
+                              Admin Dashboard
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setAdminDropdownOpen(false);
+                                navigate('/admin/features');
+                              }}
+                            >
+                              Features
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setAdminDropdownOpen(false);
+                                navigate('/admin/plans');
+                              }}
+                            >
+                              Plans
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </>
                   ) : (
-                    <NavItem to="/user/dashboard">
+                    <Link to="/user/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                       Dashboard
-                    </NavItem>
+                    </Link>
                   )}
                 </>
               ) : (
@@ -176,7 +180,6 @@ function NavBar() {
             </div>
           </div>
 
-          {/* User Menu & Mobile Toggle */}
           <div className="flex items-center space-x-3">
             {user && (
               <div className="relative" ref={userMenuRef}>
@@ -231,7 +234,6 @@ function NavBar() {
               </div>
             )}
 
-            {/* Mobile menu button */}
             <button
               className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -248,7 +250,6 @@ function NavBar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-lg">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -270,6 +271,9 @@ function NavBar() {
                   
                   {user.role === "admin" ? (
                     <>
+                      <NavItem to="/user/dashboard" onClick={() => setMobileMenuOpen(false)} className="block w-full">
+                        Dashboard
+                      </NavItem>
                       <NavItem to="/admin/dashboard" onClick={() => setMobileMenuOpen(false)} className="block w-full">
                         Admin Dashboard
                       </NavItem>
@@ -336,7 +340,9 @@ function App() {
       <Router>
         <NavBar />
         <Routes>
-          <Route path="/" element={<h1 className="text-3xl font-bold">Welcome</h1>} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/plans" element={<Plans />} />
+          <Route path="/subscribe/:planId" element={<RequireAuth><Subscribe /></RequireAuth>} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />

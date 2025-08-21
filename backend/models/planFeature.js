@@ -22,40 +22,6 @@ module.exports = (sequelize, DataTypes) => {
           model: 'features',
           key: 'id'
         }
-      },
-      // Units included in the base plan price
-      included_units: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      // Price per unit when exceeded (can override feature default)
-      overage_unit_price: {
-        type: DataTypes.DECIMAL(10, 4),
-        allowNull: true,
-      },
-      // Whether this feature has unlimited usage
-      is_unlimited: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
-      // Whether to charge for overage or just block usage
-      allow_overage: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-      },
-      // Order for display purposes
-      sort_order: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      is_active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
       }
     },
     {

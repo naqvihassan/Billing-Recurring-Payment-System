@@ -18,13 +18,10 @@ exports.create = async (req, res) => {
     if (!name || monthlyFee == null) return res.status(400).json({ message: "Missing fields" });
     const plan = await Plan.create({ name, monthlyFee });
     if (Array.isArray(features) && features.length) {
-      for (const f of features) {
-        if (!f.featureId || f.included_units == null) continue;
+      for (const featureId of features) {
         await PlanFeature.create({
           planId: plan.id,
-          featureId: f.featureId,
-          included_units: f.included_units,
-          overage_unit_price: f.overage_unit_price ?? null,
+          featureId: featureId,
         });
       }
     }

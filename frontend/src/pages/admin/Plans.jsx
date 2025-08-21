@@ -4,7 +4,7 @@ import api from "../../api/axios";
 export default function Plans() {
   const [features, setFeatures] = useState([]);
   const [plans, setPlans] = useState([]);
-  const [form, setForm] = useState({ name: "", monthlyFee: "", featureDetails: {} });
+  const [form, setForm] = useState({ name: "", monthlyFee: "", selectedFeatures: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -28,15 +28,16 @@ export default function Plans() {
     load();
   }, []);
 
-  const toggleFeature = (id) => {
+  const toggleFeature = (featureId) => {
     setForm((prev) => {
-      const featureDetails = { ...prev.featureDetails };
-      if (featureDetails[id]) {
-        delete featureDetails[id];
+      const selectedFeatures = [...prev.selectedFeatures];
+      const index = selectedFeatures.indexOf(featureId);
+      if (index > -1) {
+        selectedFeatures.splice(index, 1);
       } else {
-        featureDetails[id] = { included_units: "", overage_unit_price: "" };
+        selectedFeatures.push(featureId);
       }
-      return { ...prev, featureDetails };
+      return { ...prev, selectedFeatures };
     });
   };
 
@@ -44,18 +45,13 @@ export default function Plans() {
     e.preventDefault();
     setError("");
     try {
-      const features = Object.entries(form.featureDetails).map(([featureId, v]) => ({
-        featureId,
-        included_units: Number(v.included_units),
-        overage_unit_price: v.overage_unit_price === "" ? null : Number(v.overage_unit_price),
-      }));
       const payload = {
         name: form.name.trim(),
         monthlyFee: Number(form.monthlyFee),
-        features,
+        features: form.selectedFeatures,
       };
       await api.post("/admin/plans", payload);
-      setForm({ name: "", monthlyFee: "", featureDetails: {} });
+      setForm({ name: "", monthlyFee: "", selectedFeatures: [] });
       setLoading(true);
       await load();
     } catch (e) {
@@ -95,63 +91,23 @@ export default function Plans() {
             <p className="font-semibold mb-2">Select features</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {features.map((f) => (
-                <div key={f.id} className={`border rounded p-3 ${form.featureDetails[f.id] ? 'ring-2 ring-blue-500' : ''}`}>
+                <div key={f.id} className={`border rounded p-3 ${form.selectedFeatures.includes(f.id) ? 'ring-2 ring-blue-500' : ''}`}>
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={Boolean(form.featureDetails[f.id])}
+                      checked={form.selectedFeatures.includes(f.id)}
                       onChange={() => toggleFeature(f.id)}
                     />
                     <span className="text-sm">{f.name} ({f.code})</span>
                     <span className="ml-auto text-xs text-gray-500">${Number(f.unit_price).toFixed(2)} • max {f.max_unit_limit}</span>
                   </label>
-                  {form.featureDetails[f.id] && (
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      <input
-                        className="input"
-                        type="number"
-                        min="0"
-                        placeholder={`Included units (max: ${f.max_unit_limit})`}
-                        max={f.max_unit_limit}
-                        value={form.featureDetails[f.id].included_units}
-                        onChange={(e) => setForm({
-                          ...form,
-                          featureDetails: {
-                            ...form.featureDetails,
-                            [f.id]: { ...form.featureDetails[f.id], included_units: e.target.value },
-                          },
-                        })}
-                        required
-                      />
-                      {Number(form.featureDetails[f.id].included_units) > Number(f.max_unit_limit) && (
-                        <div className="col-span-2 text-sm text-red-600 mt-1">
-                          Cannot exceed maximum limit of {f.max_unit_limit} units
-                        </div>
-                      )}
-                      <input
-                        className="input"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="Overage price (optional)"
-                        value={form.featureDetails[f.id].overage_unit_price}
-                        onChange={(e) => setForm({
-                          ...form,
-                          featureDetails: {
-                            ...form.featureDetails,
-                            [f.id]: { ...form.featureDetails[f.id], overage_unit_price: e.target.value },
-                          },
-                        })}
-                      />
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
           </div>
           <div className="sm:flex sm:items-center sm:justify-between">
             <div className="text-sm text-gray-600 mb-2 sm:mb-0">
-              Selected: {Object.keys(form.featureDetails).length} features
+              Selected: {form.selectedFeatures.length} features
             </div>
             <button className="btn-primary w-full sm:w-auto" type="submit">Create Plan</button>
           </div>

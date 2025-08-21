@@ -1,28 +1,14 @@
-import { useEffect, useState } from "react";
-import api from "../../api/axios";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
-  const [status, setStatus] = useState("...");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const res = await api.get("/user/admin/health");
-        setStatus(res.data.status);
-      } catch (e) {
-        setError(e.response?.data?.message || "Error");
-      }
-    };
-    fetchStatus();
-  }, []);
-
   return (
     <div className="container py-6">
-      <div className="card">
+      <div className="card space-y-4">
         <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-        <p className="text-gray-600">Health: {status}</p>
-        {error && <p className="text-red-600">{error}</p>}
+        <div className="flex gap-3">
+          <Link to="/admin/features" className="btn-primary">Manage Features</Link>
+          <Link to="/admin/plans" className="btn-secondary">Manage Plans</Link>
+        </div>
       </div>
     </div>
   );

@@ -157,6 +157,14 @@ export default function Dashboard() {
                       }`}>
                         {subscription.status}
                       </span>
+                      <div className="mt-2">
+                        <Link
+                          to={`/user/subscriptions/${subscription.id}`}
+                          className="btn-secondary btn-sm"
+                        >
+                          View Details
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>

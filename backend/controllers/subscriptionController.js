@@ -71,6 +71,29 @@ exports.getUserSubscriptions = async (req, res) => {
   }
 };
 
+exports.getSubscriptionDetails = async (req, res) => {
+  try {
+    const { subscriptionId } = req.params;
+    const userId = req.user.id;
+
+    const subscription = await Subscription.findOne({
+      where: { id: subscriptionId, userId },
+      include: [
+        { model: Plan, as: 'plan' },
+        { model: User, as: 'user', attributes: ['id', 'username', 'email'] }
+      ]
+    });
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    res.json(subscription);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.cancelSubscription = async (req, res) => {
   try {
     const { subscriptionId } = req.params;
@@ -94,6 +117,43 @@ exports.cancelSubscription = async (req, res) => {
     });
 
     res.json({ message: "Subscription cancelled successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getAllSubscriptions = async (req, res) => {
+  try {
+    const subscriptions = await Subscription.findAll({
+      include: [
+        { model: Plan, as: 'plan' },
+        { model: User, as: 'user', attributes: ['id', 'username', 'email'] }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+
+    res.json(subscriptions);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getSubscriptionById = async (req, res) => {
+  try {
+    const { subscriptionId } = req.params;
+
+    const subscription = await Subscription.findByPk(subscriptionId, {
+      include: [
+        { model: Plan, as: 'plan' },
+        { model: User, as: 'user', attributes: ['id', 'username', 'email'] }
+      ]
+    });
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    res.json(subscription);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

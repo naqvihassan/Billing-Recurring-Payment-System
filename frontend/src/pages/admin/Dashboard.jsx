@@ -8,6 +8,7 @@ export default function Dashboard() {
         <div className="flex gap-3">
           <Link to="/admin/features" className="btn-primary">Manage Features</Link>
           <Link to="/admin/plans" className="btn-secondary">Manage Plans</Link>
+          <Link to="/admin/subscriptions" className="btn-secondary">View Subscriptions</Link>
         </div>
       </div>
     </div>

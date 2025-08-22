@@ -10,7 +10,9 @@ import Profile from "./pages/user/Profile";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminFeatures from "./pages/admin/Features";
 import AdminPlans from "./pages/admin/Plans";
+import AdminSubscriptions from "./pages/admin/Subscriptions";
 import UserDashboard from "./pages/user/Dashboard";
+import UserSubscriptionDetail from "./pages/user/SubscriptionDetail";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -198,9 +200,6 @@ function NavBar() {
                       <Link to="/plans" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                         Available Plans
                       </Link>
-                      <Link to="/user/subscriptions" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-                        My Subscriptions
-                      </Link>
                       <Link to="/user/usage" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                         Usage
                       </Link>
@@ -332,7 +331,6 @@ function NavBar() {
                         Dashboard
                       </NavItem>
                       <NavItem to="/plans" onClick={() => setMobileMenuOpen(false)} className="block w-full">Available Plans</NavItem>
-                      <NavItem to="/user/subscriptions" onClick={() => setMobileMenuOpen(false)} className="block w-full">My Subscriptions</NavItem>
                       <NavItem to="/user/usage" onClick={() => setMobileMenuOpen(false)} className="block w-full">Usage</NavItem>
                       <NavItem to="/user/invoices" onClick={() => setMobileMenuOpen(false)} className="block w-full">Invoices / Payments</NavItem>
                     </>
@@ -395,9 +393,11 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/user/dashboard" element={<RequireAuth><UserDashboard /></RequireAuth>} />
+          <Route path="/user/subscriptions/:subscriptionId" element={<RequireAuth><UserSubscriptionDetail /></RequireAuth>} />
           <Route path="/admin/dashboard" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
           <Route path="/admin/features" element={<RequireAdmin><AdminFeatures /></RequireAdmin>} />
           <Route path="/admin/plans" element={<RequireAdmin><AdminPlans /></RequireAdmin>} />
+          <Route path="/admin/subscriptions" element={<RequireAdmin><AdminSubscriptions /></RequireAdmin>} />
           <Route path="/user/profile" element={<Navigate to="/profile" replace />} />
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>

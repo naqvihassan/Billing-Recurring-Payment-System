@@ -6,6 +6,7 @@ const { requireRole } = require("../middleware/authMiddleware");
 
 const featureController = require("../controllers/featureController");
 const planController = require("../controllers/planController");
+const subscriptionController = require("../controllers/subscriptionController");
 
 router.use(authenticate);
 router.use(requireRole(["admin"]));
@@ -19,6 +20,9 @@ router.get("/plans", planController.list);
 router.post("/plans", planController.create);
 router.put("/plans/:id", planController.update);
 router.delete("/plans/:id", planController.remove);
+
+router.get("/subscriptions", subscriptionController.getAllSubscriptions);
+router.get("/subscriptions/:subscriptionId", subscriptionController.getSubscriptionById);
 
 module.exports = router;
 

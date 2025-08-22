@@ -11,6 +11,7 @@ router.get("/plans", planController.list);
 
 router.get("/profile", authenticate, getUserProfile);
 router.get("/subscriptions", authenticate, subscriptionController.getUserSubscriptions);
+router.get("/subscriptions/:subscriptionId", authenticate, subscriptionController.getSubscriptionDetails);
 router.post("/subscribe", authenticate, subscriptionController.createSubscription);
 router.put("/subscriptions/:subscriptionId/cancel", authenticate, subscriptionController.cancelSubscription);
 

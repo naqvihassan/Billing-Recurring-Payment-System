@@ -21,12 +21,12 @@ export default function Dashboard() {
         api.get("/user/subscriptions"),
       ]);
       setSubscriptions(subsRes.data);
-    } catch (e) {
+      } catch (e) {
       setError(e.response?.data?.message || "Error loading dashboard data");
-    } finally {
-      setLoading(false);
-    }
-  };
+      } finally {
+        setLoading(false);
+      }
+    };
 
   if (loading) return (
     <div className="container mx-auto px-4 py-8">

@@ -104,16 +104,10 @@ function NavBar() {
             <div className="flex items-center gap-4">
               {user ? (
                 <>
-                  <NavItem to="/profile">
-                    <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Profile
-                  </NavItem>
                   
                   {user.role === "admin" ? (
                     <>
-                      <Link to="/user/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                      <Link to="/admin/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                         Dashboard
                       </Link>
                       <div className="relative" ref={adminDropdownRef}>
@@ -128,15 +122,24 @@ function NavBar() {
                         </button>
                         
                         {adminDropdownOpen && (
-                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow border border-gray-200 py-1 z-50">
+                          <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow border border-gray-200 py-1 z-50">
                             <button
                               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               onClick={() => {
                                 setAdminDropdownOpen(false);
-                                navigate('/admin/dashboard');
+                                navigate('/admin/users');
                               }}
                             >
-                              Admin Dashboard
+                              Users
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setAdminDropdownOpen(false);
+                                navigate('/admin/plans');
+                              }}
+                            >
+                              Plans
                             </button>
                             <button
                               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -151,19 +154,60 @@ function NavBar() {
                               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               onClick={() => {
                                 setAdminDropdownOpen(false);
-                                navigate('/admin/plans');
+                                navigate('/admin/subscriptions');
                               }}
                             >
-                              Plans
+                              Subscriptions
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setAdminDropdownOpen(false);
+                                navigate('/admin/usage');
+                              }}
+                            >
+                              Usage
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setAdminDropdownOpen(false);
+                                navigate('/admin/invoices');
+                              }}
+                            >
+                              Billing / Invoices
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setAdminDropdownOpen(false);
+                                navigate('/admin/reports');
+                              }}
+                            >
+                              Reports
                             </button>
                           </div>
                         )}
                       </div>
                     </>
                   ) : (
-                    <Link to="/user/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-                      Dashboard
-                    </Link>
+                    <>
+                      <Link to="/user/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                        Dashboard
+                      </Link>
+                      <Link to="/plans" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                        Available Plans
+                      </Link>
+                      <Link to="/user/subscriptions" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                        My Subscriptions
+                      </Link>
+                      <Link to="/user/usage" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                        Usage
+                      </Link>
+                      <Link to="/user/invoices" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                        Invoices / Payments
+                      </Link>
+                    </>
                   )}
                 </>
               ) : (
@@ -271,23 +315,27 @@ function NavBar() {
                   
                   {user.role === "admin" ? (
                     <>
+                      <NavItem to="/admin/dashboard" onClick={() => setMobileMenuOpen(false)} className="block w-full">
+                        Dashboard
+                      </NavItem>
+                      <NavItem to="/admin/users" onClick={() => setMobileMenuOpen(false)} className="block w-full">Users</NavItem>
+                      <NavItem to="/admin/plans" onClick={() => setMobileMenuOpen(false)} className="block w-full">Plans</NavItem>
+                      <NavItem to="/admin/features" onClick={() => setMobileMenuOpen(false)} className="block w-full">Features</NavItem>
+                      <NavItem to="/admin/subscriptions" onClick={() => setMobileMenuOpen(false)} className="block w-full">Subscriptions</NavItem>
+                      <NavItem to="/admin/usage" onClick={() => setMobileMenuOpen(false)} className="block w-full">Usage</NavItem>
+                      <NavItem to="/admin/invoices" onClick={() => setMobileMenuOpen(false)} className="block w-full">Billing / Invoices</NavItem>
+                      <NavItem to="/admin/reports" onClick={() => setMobileMenuOpen(false)} className="block w-full">Reports</NavItem>
+                    </>
+                  ) : (
+                    <>
                       <NavItem to="/user/dashboard" onClick={() => setMobileMenuOpen(false)} className="block w-full">
                         Dashboard
                       </NavItem>
-                      <NavItem to="/admin/dashboard" onClick={() => setMobileMenuOpen(false)} className="block w-full">
-                        Admin Dashboard
-                      </NavItem>
-                      <NavItem to="/admin/features" onClick={() => setMobileMenuOpen(false)} className="block w-full">
-                        Features
-                      </NavItem>
-                      <NavItem to="/admin/plans" onClick={() => setMobileMenuOpen(false)} className="block w-full">
-                        Plans
-                      </NavItem>
+                      <NavItem to="/plans" onClick={() => setMobileMenuOpen(false)} className="block w-full">Available Plans</NavItem>
+                      <NavItem to="/user/subscriptions" onClick={() => setMobileMenuOpen(false)} className="block w-full">My Subscriptions</NavItem>
+                      <NavItem to="/user/usage" onClick={() => setMobileMenuOpen(false)} className="block w-full">Usage</NavItem>
+                      <NavItem to="/user/invoices" onClick={() => setMobileMenuOpen(false)} className="block w-full">Invoices / Payments</NavItem>
                     </>
-                  ) : (
-                    <NavItem to="/user/dashboard" onClick={() => setMobileMenuOpen(false)} className="block w-full">
-                      Dashboard
-                    </NavItem>
                   )}
                   
                   <button

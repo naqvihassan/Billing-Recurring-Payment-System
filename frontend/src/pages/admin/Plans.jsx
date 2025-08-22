@@ -8,6 +8,8 @@ export default function Plans() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [editing, setEditing] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const load = async () => {
     try {
@@ -56,6 +58,63 @@ export default function Plans() {
       await load();
     } catch (e) {
       setError(e.response?.data?.message || "Error");
+    }
+  };
+
+  const startEdit = (p) => {
+    setError("");
+    setEditing({
+      id: p.id,
+      name: p.name,
+      monthlyFee: String(p.monthlyFee),
+      featureIds: (p.Features || []).map((f) => f.id),
+    });
+  };
+
+  const toggleEditFeature = (featureId) => {
+    if (!editing) return;
+    const next = new Set(editing.featureIds);
+    if (next.has(featureId)) next.delete(featureId); else next.add(featureId);
+    setEditing({ ...editing, featureIds: Array.from(next) });
+  };
+
+  const saveEdit = async () => {
+    if (!editing) return;
+    const name = editing.name?.trim();
+    const monthlyFee = Number(editing.monthlyFee);
+    if (!name || !Number.isFinite(monthlyFee) || monthlyFee < 0) {
+      setError("Please provide a valid name and monthly fee");
+      return;
+    }
+    try {
+      await api.put(`/admin/plans/${editing.id}`, {
+        name,
+        monthlyFee,
+        features: editing.featureIds,
+      });
+      setEditing(null);
+      setLoading(true);
+      await load();
+    } catch (e) {
+      setError(e.response?.data?.message || "Error");
+    }
+  };
+
+  const requestDelete = (id) => {
+    setError("");
+    setConfirmDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDeleteId) return;
+    try {
+      await api.delete(`/admin/plans/${confirmDeleteId}`);
+      setConfirmDeleteId(null);
+      setLoading(true);
+      await load();
+    } catch (e) {
+      setError(e.response?.data?.message || "Error");
+      setConfirmDeleteId(null);
     }
   };
 
@@ -127,6 +186,7 @@ export default function Plans() {
                     <th className="text-left p-2 border">Plan</th>
                     <th className="text-left p-2 border">Monthly Fee</th>
                     <th className="text-left p-2 border">Features</th>
+                    <th className="text-right p-2 border">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -135,6 +195,12 @@ export default function Plans() {
                       <td className="p-2 border font-medium">{p.name}</td>
                       <td className="p-2 border">${Number(p.monthlyFee).toFixed(2)}</td>
                       <td className="p-2 border text-gray-700">{p.Features?.map((f) => f.name).join(", ") || "No features"}</td>
+                      <td className="p-2 border text-right">
+                        <div className="flex justify-end gap-2">
+                          <button className="btn-secondary btn-sm" onClick={() => startEdit(p)}>Edit</button>
+                          <button className="btn-danger btn-sm" onClick={() => requestDelete(p.id)}>Delete</button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -143,6 +209,58 @@ export default function Plans() {
           )}
         </div>
       </div>
+      {editing && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-4">
+            <h4 className="text-lg font-semibold mb-3">Edit Plan</h4>
+            <div className="grid gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm text-gray-600">Name</label>
+                  <input className="input" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600">Monthly Fee</label>
+                  <input className="input" type="number" step="0.01" min="0" value={editing.monthlyFee} onChange={(e) => setEditing({ ...editing, monthlyFee: e.target.value })} />
+                </div>
+              </div>
+              <div>
+                <p className="font-semibold mb-2">Select features</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-auto pr-1">
+                  {features.map((f) => (
+                    <label key={f.id} className={`flex items-center gap-2 p-2 border rounded ${editing.featureIds.includes(f.id) ? 'ring-2 ring-blue-500' : ''}`}>
+                      <input
+                        type="checkbox"
+                        checked={editing.featureIds.includes(f.id)}
+                        onChange={() => toggleEditFeature(f.id)}
+                      />
+                      <span className="text-sm">{f.name} ({f.code})</span>
+                      <span className="ml-auto text-xs text-gray-500">${Number(f.unit_price).toFixed(2)} • max {f.max_unit_limit}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button className="btn-secondary" onClick={() => setEditing(null)}>Cancel</button>
+              <button className="btn-primary" onClick={saveEdit}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDeleteId && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-4">
+            <h4 className="text-lg font-semibold mb-2">Delete Plan?</h4>
+            <p className="text-sm text-gray-600">This cannot be undone. If the plan has active subscribers, deletion will be blocked.</p>
+            <div className="flex justify-end gap-2 mt-4">
+              <button className="btn-secondary" onClick={() => setConfirmDeleteId(null)}>Cancel</button>
+              <button className="btn-danger" onClick={confirmDelete}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

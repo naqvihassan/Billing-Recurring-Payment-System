@@ -12,9 +12,13 @@ router.use(requireRole(["admin"]));
 
 router.get("/features", featureController.list);
 router.post("/features", featureController.create);
+router.put("/features/:id", featureController.update);
+router.delete("/features/:id", featureController.remove);
 
 router.get("/plans", planController.list);
 router.post("/plans", planController.create);
+router.put("/plans/:id", planController.update);
+router.delete("/plans/:id", planController.remove);
 
 module.exports = router;
 

@@ -8,6 +8,8 @@ export default function Features() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("createdAtDesc");
+  const [editing, setEditing] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const load = async () => {
     try {
@@ -83,6 +85,48 @@ export default function Features() {
     return data;
   }, [features, query, sortBy]);
 
+  const startEdit = (f) => {
+    setError("");
+    setEditing({ id: f.id, name: f.name, unit_price: String(f.unit_price), max_unit_limit: String(f.max_unit_limit) });
+  };
+
+  const saveEdit = async () => {
+    if (!editing) return;
+    const name = editing.name?.trim();
+    const unit_price = Number(editing.unit_price);
+    const max_unit_limit = Number(editing.max_unit_limit);
+    if (!name || !Number.isFinite(unit_price) || unit_price < 0 || !Number.isInteger(max_unit_limit) || max_unit_limit < 0) {
+      setError("Please provide valid values");
+      return;
+    }
+    try {
+      await api.put(`/admin/features/${editing.id}`, { name, unit_price, max_unit_limit });
+      setEditing(null);
+      setLoading(true);
+      await load();
+    } catch (e) {
+      setError(e.response?.data?.message || "Error");
+    }
+  };
+
+  const requestDelete = (id) => {
+    setError("");
+    setConfirmDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDeleteId) return;
+    try {
+      await api.delete(`/admin/features/${confirmDeleteId}`);
+      setConfirmDeleteId(null);
+      setLoading(true);
+      await load();
+    } catch (e) {
+      setError(e.response?.data?.message || "Error");
+      setConfirmDeleteId(null);
+    }
+  };
+
   return (
     <div className="container py-6">
       <div className="card">
@@ -150,6 +194,7 @@ export default function Features() {
                     <th className="text-left p-2 border">Code</th>
                     <th className="text-right p-2 border">Unit Price</th>
                     <th className="text-right p-2 border">Max Units</th>
+                    <th className="text-right p-2 border">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -159,6 +204,12 @@ export default function Features() {
                       <td className="p-2 border text-gray-700">{f.code}</td>
                       <td className="p-2 border text-right">${Number(f.unit_price).toFixed(2)}</td>
                       <td className="p-2 border text-right">{f.max_unit_limit}</td>
+                      <td className="p-2 border text-right">
+                        <div className="flex justify-end gap-2">
+                          <button className="btn-secondary btn-sm" onClick={() => startEdit(f)}>Edit</button>
+                          <button className="btn-danger btn-sm" onClick={() => requestDelete(f.id)}>Delete</button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -167,6 +218,45 @@ export default function Features() {
           )}
         </div>
       </div>
+
+      {editing && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-4">
+            <h4 className="text-lg font-semibold mb-3">Edit Feature</h4>
+            <div className="grid gap-3">
+              <div>
+                <label className="text-sm text-gray-600">Name</label>
+                <input className="input" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-sm text-gray-600">Unit Price</label>
+                <input className="input" type="number" step="0.01" min="0" value={editing.unit_price} onChange={(e) => setEditing({ ...editing, unit_price: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-sm text-gray-600">Max Unit Limit</label>
+                <input className="input" type="number" min="0" value={editing.max_unit_limit} onChange={(e) => setEditing({ ...editing, max_unit_limit: e.target.value })} />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button className="btn-secondary" onClick={() => setEditing(null)}>Cancel</button>
+              <button className="btn-primary" onClick={saveEdit}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDeleteId && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-4">
+            <h4 className="text-lg font-semibold mb-2">Delete Feature?</h4>
+            <p className="text-sm text-gray-600">This cannot be undone. If the feature is used by plans with active subscribers, deletion will be blocked.</p>
+            <div className="flex justify-end gap-2 mt-4">
+              <button className="btn-secondary" onClick={() => setConfirmDeleteId(null)}>Cancel</button>
+              <button className="btn-danger" onClick={confirmDelete}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

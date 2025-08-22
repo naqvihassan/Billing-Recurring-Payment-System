@@ -12,6 +12,7 @@ export default function SubscriptionDetail() {
   const [error, setError] = useState("");
   const [cancelling, setCancelling] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [usage, setUsage] = useState([]);
 
   useEffect(() => {
     fetchSubscription();
@@ -22,6 +23,12 @@ export default function SubscriptionDetail() {
       setLoading(true);
       const res = await api.get(`/user/subscriptions/${subscriptionId}`);
       setSubscription(res.data);
+      try {
+        const usageRes = await api.get(`/user/subscriptions/${subscriptionId}/usage`);
+        setUsage(usageRes.data);
+      } catch (e) {
+        setUsage([]);
+      }
     } catch (e) {
       setError(e.response?.data?.message || "Error loading subscription");
     } finally {
@@ -146,11 +153,18 @@ export default function SubscriptionDetail() {
             {subscription.plan?.Features && subscription.plan.Features.length > 0 ? (
               <div className="space-y-2">
                 {subscription.plan.Features.map((feature) => (
-                  <div key={feature.id} className="flex justify-between items-center">
-                    <span className="text-sm">{feature.name}</span>
-                    <span className="text-xs text-gray-500">
-                      {feature.max_unit_limit > 0 ? `Up to ${feature.max_unit_limit}` : 'Unlimited'}
-                    </span>
+                  <div key={feature.id} className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{feature.name}</span>
+                      <span className="text-xs text-gray-500">
+                        {feature.max_unit_limit > 0 ? `Up to ${feature.max_unit_limit}` : 'Unlimited'}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      Used this period: {usage
+                        .filter(u => u.planFeatureId === (feature.PlanFeature?.id || feature.planFeatureId))
+                        .reduce((sum, u) => sum + Number(u.units_used || 0), 0)}
+                    </div>
                   </div>
                 ))}
               </div>

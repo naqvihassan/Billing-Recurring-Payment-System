@@ -79,7 +79,11 @@ exports.getSubscriptionDetails = async (req, res) => {
     const subscription = await Subscription.findOne({
       where: { id: subscriptionId, userId },
       include: [
-        { model: Plan, as: 'plan' },
+        {
+          model: Plan,
+          as: 'plan',
+          include: [{ association: 'Features', through: { attributes: ['id'] } }]
+        },
         { model: User, as: 'user', attributes: ['id', 'username', 'email'] }
       ]
     });
@@ -144,7 +148,14 @@ exports.getSubscriptionById = async (req, res) => {
 
     const subscription = await Subscription.findByPk(subscriptionId, {
       include: [
-        { model: Plan, as: 'plan' },
+        { 
+          model: Plan, 
+          as: 'plan', 
+          include: [{
+            association: 'Features',
+            through: { attributes: ['id'] }
+          }]
+        },
         { model: User, as: 'user', attributes: ['id', 'username', 'email'] }
       ]
     });

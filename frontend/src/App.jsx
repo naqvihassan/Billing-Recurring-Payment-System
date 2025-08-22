@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminFeatures from "./pages/admin/Features";
 import AdminPlans from "./pages/admin/Plans";
 import AdminSubscriptions from "./pages/admin/Subscriptions";
+import AdminUsage from "./pages/admin/Usage";
 import UserDashboard from "./pages/user/Dashboard";
 import UserSubscriptionDetail from "./pages/user/SubscriptionDetail";
 
@@ -398,6 +399,7 @@ function App() {
           <Route path="/admin/features" element={<RequireAdmin><AdminFeatures /></RequireAdmin>} />
           <Route path="/admin/plans" element={<RequireAdmin><AdminPlans /></RequireAdmin>} />
           <Route path="/admin/subscriptions" element={<RequireAdmin><AdminSubscriptions /></RequireAdmin>} />
+          <Route path="/admin/usage" element={<RequireAdmin><AdminUsage /></RequireAdmin>} />
           <Route path="/user/profile" element={<Navigate to="/profile" replace />} />
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>

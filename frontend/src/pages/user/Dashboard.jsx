@@ -17,10 +17,45 @@ export default function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [subsRes] = await Promise.all([
-        api.get("/user/subscriptions"),
-      ]);
-      setSubscriptions(subsRes.data);
+      const subsRes = await api.get("/user/subscriptions");
+      const subs = subsRes.data || [];
+      setSubscriptions(subs);
+
+      const pad2 = (n) => String(n).padStart(2, '0');
+      const toLocalYmd = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+      const todayIso = toLocalYmd(new Date());
+      const usageResults = await Promise.all(
+        subs.map(async (s) => {
+          try {
+            const u = await api.get(`/user/subscriptions/${s.id}/usage`);
+            return u.data || [];
+          } catch {
+            return [];
+          }
+        })
+      );
+      const allUsage = usageResults.flat();
+      const todaysUsage = allUsage.filter((u) => {
+        const d = new Date(u.usage_date);
+        return toLocalYmd(d) === todayIso;
+      });
+      const byFeature = new Map();
+      for (const u of todaysUsage) {
+        const feature = u.planFeature?.feature || {};
+        const key = feature.id || u.planFeatureId || `${feature.name}|${feature.code}`;
+        if (!byFeature.has(key)) {
+          byFeature.set(key, {
+            featureId: feature.id,
+            featureName: feature.name || 'Unknown Feature',
+            featureCode: feature.code,
+            unitPrice: Number(feature.unit_price || 0),
+            totalUnits: 0,
+          });
+        }
+        const item = byFeature.get(key);
+        item.totalUnits += Number(u.units_used || 0);
+      }
+      setUsage(Array.from(byFeature.values()));
       } catch (e) {
       setError(e.response?.data?.message || "Error loading dashboard data");
       } finally {
@@ -191,20 +226,20 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="space-y-4">
-              {usage.map((usageItem) => (
-                <div key={usageItem.id} className="border rounded-lg p-4">
+              {usage.map((f) => (
+                <div key={f.featureId || f.featureName} className="border rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">
-                        {usageItem.planFeature?.feature?.name}
+                        {f.featureName}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        {usageItem.units_used} units used on {new Date(usageItem.usage_date).toLocaleDateString()}
+                        {f.totalUnits} units used today
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium text-gray-900">
-                        ${(usageItem.units_used * usageItem.planFeature?.feature?.unit_price).toFixed(2)}
+                        ${(f.totalUnits * f.unitPrice).toFixed(2)}
                       </p>
                     </div>
                   </div>

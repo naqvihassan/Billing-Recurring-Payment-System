@@ -10,6 +10,7 @@ export default function Plans() {
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [warnings, setWarnings] = useState([]);
 
   const load = async () => {
     try {
@@ -87,11 +88,13 @@ export default function Plans() {
       return;
     }
     try {
-      await api.put(`/admin/plans/${editing.id}`, {
+      const res = await api.put(`/admin/plans/${editing.id}`, {
         name,
         monthlyFee,
         features: editing.featureIds,
       });
+      const serverWarnings = res.data?.warnings?.failedFeatureRemovals || [];
+      setWarnings(serverWarnings);
       setEditing(null);
       setLoading(true);
       await load();
@@ -139,7 +142,28 @@ export default function Plans() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        {error && <p className="text-red-600">{error}</p>}
+        {error && (
+          <div className="mt-3 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
+            <div className="font-semibold mb-1">Action failed</div>
+            <div>{error}</div>
+            <div className="text-right mt-2">
+              <button className="text-red-800 underline" onClick={() => setError("")}>Dismiss</button>
+            </div>
+          </div>
+        )}
+        {warnings.length > 0 && (
+          <div className="mt-3 rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-800">
+            <div className="font-semibold mb-1">Some features could not be removed:</div>
+            <ul className="list-disc ml-5 space-y-1">
+              {warnings.map((w, idx) => (
+                <li key={idx}>{w.featureName || w.featureCode || w.featureId}: {w.reason}</li>
+              ))}
+            </ul>
+            <div className="text-right mt-2">
+              <button className="text-yellow-800 underline" onClick={() => setWarnings([])}>Dismiss</button>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={submit} className="mt-6 grid grid-cols-1 gap-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

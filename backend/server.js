@@ -5,6 +5,7 @@ const cors = require("cors");
 const { sequelize } = require("./models");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes)
+app.use("/admin", adminRoutes)
 
 
 sequelize

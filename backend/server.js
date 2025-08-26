@@ -1,13 +1,24 @@
+// server.js
 const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-dotenv.config();
+const { sequelize } = require("./models");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
+const PORT = 3000;
 
-app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use("/users", userRoutes);
+
 app.get("/", (req, res) => {
-  res.send("Backend is running!");
+  res.send("Backend is running 🚀");
 });
 
-app.listen(process.env.PORT, () => console.log(`Server running on http://localhost:${process.env.PORT}`));
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Database synced ✅");
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch((err) => console.error("DB Sync error:", err));

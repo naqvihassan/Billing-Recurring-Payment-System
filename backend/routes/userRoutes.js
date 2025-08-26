@@ -1,23 +1,14 @@
-// routes/userRoutes.js
 const express = require("express");
-const { User } = require("../models");
+const { getUserProfile } = require("../controllers/userController");
+const authenticate = require("../middleware/authMiddleware");
+const { requireRole } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Create User
-router.post("/", async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    res.json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+router.get("/profile", authenticate, getUserProfile);
 
-// Get All Users
-router.get("/", async (req, res) => {
-  const users = await User.findAll();
-  res.json(users);
+router.get("/admin/health", authenticate, requireRole(["admin"]), (req, res) => {
+  res.json({ status: "ok", user: req.user });
 });
 
 module.exports = router;

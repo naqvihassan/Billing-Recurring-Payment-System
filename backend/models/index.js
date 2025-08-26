@@ -1,4 +1,3 @@
-//created to use import models as whole
 const fs = require("fs");
 const path = require("path");
 const { Sequelize, DataTypes } = require("sequelize");

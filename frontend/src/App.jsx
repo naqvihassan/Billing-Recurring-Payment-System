@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthProvider, AuthContext } from "./context/authContext";
+import {ROLES} from './constants/roles';
 import LandingPage from "./pages/LandingPage";
 import Plans from "./pages/Plans";
 import Subscribe from "./pages/Subscribe";
@@ -108,7 +109,7 @@ function NavBar() {
               {user ? (
                 <>
                   
-                  {user.role === "admin" ? (
+                  {user.role === ROLES.ADMIN ? (
                     <>
                       <Link to="/admin/dashboard" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                         Dashboard
@@ -313,7 +314,7 @@ function NavBar() {
                     Profile
                   </NavItem>
                   
-                  {user.role === "admin" ? (
+                  {user.role === ROLES.ADMIN ? (
                     <>
                       <NavItem to="/admin/dashboard" onClick={() => setMobileMenuOpen(false)} className="block w-full">
                         Dashboard
@@ -378,7 +379,7 @@ function App() {
     const { user, loading } = useContext(AuthContext);
     if (loading) return <h2 className="p-6">Loading...</h2>;
     if (!user) return <Navigate to="/login" replace />;
-    if (user.role !== "admin") return <Navigate to="/" replace />;
+  if (user.role !== ROLES.ADMIN) return <Navigate to="/" replace />;
     return children;
   };
 

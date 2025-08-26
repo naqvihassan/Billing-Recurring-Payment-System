@@ -10,7 +10,8 @@ const subscriptionController = require("../controllers/subscriptionController");
 const usageController = require("../controllers/usageController");
 
 router.use(authenticate);
-router.use(requireRole(["admin"]));
+const ROLES = require('../constants/roles');
+router.use(requireRole([ROLES.ADMIN]));
 
 router.get("/features", featureController.list);
 router.post("/features", featureController.create);

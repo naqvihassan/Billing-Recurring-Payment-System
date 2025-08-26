@@ -4,15 +4,28 @@ import { AuthContext } from "../../context/authContext";
 import api from "../../api/axios";
 
 export default function Dashboard() {
+  const USAGE_FILTERS = [
+    { label: "Today", value: "today" },
+    { label: "Last 7 Days", value: "7days" },
+    { label: "Last 30 Days", value: "30days" },
+  ];
   const { user } = useContext(AuthContext);
   const [subscriptions, setSubscriptions] = useState([]);
   const [usage, setUsage] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [usageFilter, setUsageFilter] = useState("today");
+  const [usageLoading, setUsageLoading] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (!loading && subscriptions.length > 0) {
+      fetchUsageData();
+    }
+  }, [usageFilter, subscriptions, loading]);
 
   const fetchDashboardData = async () => {
     try {
@@ -20,12 +33,21 @@ export default function Dashboard() {
       const subsRes = await api.get("/user/subscriptions");
       const subs = subsRes.data || [];
       setSubscriptions(subs);
+    } catch (e) {
+      setError(e.response?.data?.message || "Error loading dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const fetchUsageData = async () => {
+    try {
+      setUsageLoading(true);
       const pad2 = (n) => String(n).padStart(2, '0');
       const toLocalYmd = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-      const todayIso = toLocalYmd(new Date());
+      const now = new Date();
       const usageResults = await Promise.all(
-        subs.map(async (s) => {
+        subscriptions.map(async (s) => {
           try {
             const u = await api.get(`/user/subscriptions/${s.id}/usage`);
             return u.data || [];
@@ -35,12 +57,35 @@ export default function Dashboard() {
         })
       );
       const allUsage = usageResults.flat();
-      const todaysUsage = allUsage.filter((u) => {
-        const d = new Date(u.usage_date);
-        return toLocalYmd(d) === todayIso;
-      });
+      let filteredUsage = [];
+      if (usageFilter === "today") {
+        const todayIso = toLocalYmd(now);
+        filteredUsage = allUsage.filter((u) => {
+          const d = new Date(u.usage_date);
+          return toLocalYmd(d) === todayIso;
+        });
+      } else if (usageFilter === "7days") {
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setHours(0,0,0,0);
+        sevenDaysAgo.setDate(now.getDate() - 6);
+        filteredUsage = allUsage.filter((u) => {
+          const d = new Date(u.usage_date);
+          d.setHours(0,0,0,0);
+          return d >= sevenDaysAgo && d <= now;
+        });
+      } else if (usageFilter === "30days") {
+        const thirtyDaysAgo = new Date(now);
+        thirtyDaysAgo.setHours(0,0,0,0);
+        thirtyDaysAgo.setDate(now.getDate() - 29);
+        filteredUsage = allUsage.filter((u) => {
+          const d = new Date(u.usage_date);
+          d.setHours(0,0,0,0);
+          return d >= thirtyDaysAgo && d <= now;
+        });
+      }
+      // Sum usage by feature only, across all plans
       const byFeature = new Map();
-      for (const u of todaysUsage) {
+      for (const u of filteredUsage) {
         const feature = u.planFeature?.feature || {};
         const key = feature.id || u.planFeatureId || `${feature.name}|${feature.code}`;
         if (!byFeature.has(key)) {
@@ -56,12 +101,10 @@ export default function Dashboard() {
         item.totalUnits += Number(u.units_used || 0);
       }
       setUsage(Array.from(byFeature.values()));
-      } catch (e) {
-      setError(e.response?.data?.message || "Error loading dashboard data");
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setUsageLoading(false);
+    }
+  };
 
   if (loading) return (
     <div className="container mx-auto px-4 py-8">
@@ -210,11 +253,24 @@ export default function Dashboard() {
       </div>
 
       <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-900">Recent Usage</h2>
+          <select
+            className="input w-40"
+            value={usageFilter}
+            onChange={e => setUsageFilter(e.target.value)}
+          >
+            {USAGE_FILTERS.map(f => (
+              <option key={f.value} value={f.value}>{f.label}</option>
+            ))}
+          </select>
         </div>
         <div className="p-6">
-          {usage.length === 0 ? (
+          {usageLoading ? (
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : usage.length === 0 ? (
             <div className="text-center py-8">
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -252,5 +308,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-

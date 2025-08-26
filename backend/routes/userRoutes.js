@@ -17,7 +17,8 @@ router.get("/subscriptions/:subscriptionId/usage", authenticate, usageController
 router.post("/subscribe", authenticate, subscriptionController.createSubscription);
 router.put("/subscriptions/:subscriptionId/cancel", authenticate, subscriptionController.cancelSubscription);
 
-router.get("/admin/health", authenticate, requireRole(["admin"]), (req, res) => {
+const ROLES = require('../constants/roles');
+router.get("/admin/health", authenticate, requireRole([ROLES.ADMIN]), (req, res) => {
   res.json({ status: "ok", user: req.user });
 });
 

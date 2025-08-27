@@ -83,7 +83,7 @@ export default function Dashboard() {
           return d >= thirtyDaysAgo && d <= now;
         });
       }
-      // Sum usage by feature only, across all plans
+      
       const byFeature = new Map();
       for (const u of filteredUsage) {
         const feature = u.planFeature?.feature || {};

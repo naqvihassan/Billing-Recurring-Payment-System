@@ -9,12 +9,14 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/user/Profile";
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminUsersPlans from "./pages/admin/UsersPlans";
 import AdminFeatures from "./pages/admin/Features";
 import AdminPlans from "./pages/admin/Plans";
 import AdminSubscriptions from "./pages/admin/Subscriptions";
 import AdminUsage from "./pages/admin/Usage";
 import UserDashboard from "./pages/user/Dashboard";
 import UserSubscriptionDetail from "./pages/user/SubscriptionDetail";
+import UsageOverview from "./pages/user/Usage";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -396,7 +398,9 @@ function App() {
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/user/dashboard" element={<RequireAuth><UserDashboard /></RequireAuth>} />
           <Route path="/user/subscriptions/:subscriptionId" element={<RequireAuth><UserSubscriptionDetail /></RequireAuth>} />
+          <Route path="/user/usage" element={<RequireAuth><UsageOverview /></RequireAuth>} />
           <Route path="/admin/dashboard" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+          <Route path="/admin/users" element={<RequireAdmin><AdminUsersPlans /></RequireAdmin>} />
           <Route path="/admin/features" element={<RequireAdmin><AdminFeatures /></RequireAdmin>} />
           <Route path="/admin/plans" element={<RequireAdmin><AdminPlans /></RequireAdmin>} />
           <Route path="/admin/subscriptions" element={<RequireAdmin><AdminSubscriptions /></RequireAdmin>} />

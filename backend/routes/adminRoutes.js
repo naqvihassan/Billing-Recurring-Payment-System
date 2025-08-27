@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 
@@ -8,10 +9,14 @@ const featureController = require("../controllers/featureController");
 const planController = require("../controllers/planController");
 const subscriptionController = require("../controllers/subscriptionController");
 const usageController = require("../controllers/usageController");
+const userController = require("../controllers/userController");
 
 router.use(authenticate);
 const ROLES = require('../constants/roles');
 router.use(requireRole([ROLES.ADMIN]));
+
+router.get("/users", userController.getAllUsers);
+router.get("/users/:userId/subscriptions", userController.getUserSubscriptionsWithFeatures);
 
 router.get("/features", featureController.list);
 router.post("/features", featureController.create);

@@ -52,9 +52,9 @@ export default function UsagePage() {
       setSubscriptionStart(res.data?.started_at || "");
       const pf = [];
       if (features.length && plan?.planFeatures) {
-        // attempt to map planFeatureId from through table if present
+        
       }
-      // fallback: subscriptionController.getSubscriptionById includes Feature through with planFeature id in through
+      
       const enriched = (plan?.Features || []).map((f) => ({
         id: f.id,
         name: f.name,

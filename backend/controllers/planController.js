@@ -48,14 +48,14 @@ exports.update = async (req, res) => {
       const currentFeatureIds = new Set((plan.Features || []).map((f) => f.id));
       const newFeatureIds = new Set(features);
 
-      // Add new relations first
+      
       for (const featureId of newFeatureIds) {
         if (!currentFeatureIds.has(featureId)) {
           await PlanFeature.create({ planId: plan.id, featureId });
         }
       }
 
-      // Attempt removals while protecting features that have usage
+      
       const failedFeatureRemovals = [];
       for (const featureId of currentFeatureIds) {
         if (!newFeatureIds.has(featureId)) {
@@ -77,7 +77,7 @@ exports.update = async (req, res) => {
         }
       }
 
-      // Attach warnings on response if any removals failed
+      
       if (failedFeatureRemovals.length > 0) {
         req._planUpdateWarnings = { failedFeatureRemovals };
       }

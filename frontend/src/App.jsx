@@ -19,7 +19,6 @@ import UserSubscriptionDetail from "./pages/user/SubscriptionDetail";
 import UsageOverview from "./pages/user/Usage";
 import AdminInvoices from "./pages/admin/Invoices";
 import AdminInvoiceDetail from "./pages/admin/InvoiceDetail";
-import AdminBillingActions from "./pages/admin/BillingActions";
 import BillingPayments from "./pages/user/BillingPayments";
 import BillingInvoiceView from "./pages/user/BillingInvoiceView";
 
@@ -343,7 +342,6 @@ function NavBar() {
                       <NavItem to="/admin/subscriptions" onClick={() => setMobileMenuOpen(false)} className="block w-full">Subscriptions</NavItem>
                       <NavItem to="/admin/usage" onClick={() => setMobileMenuOpen(false)} className="block w-full">Usage</NavItem>
                       <NavItem to="/admin/invoices" onClick={() => setMobileMenuOpen(false)} className="block w-full">Billing / Invoices</NavItem>
-                      <NavItem to="/admin/billing-actions" onClick={() => setMobileMenuOpen(false)} className="block w-full">Billing Actions</NavItem>
                     </>
                   ) : (
                     <>
@@ -423,7 +421,6 @@ function App() {
           <Route path="/admin/usage" element={<RequireAdmin><AdminUsage /></RequireAdmin>} />
           <Route path="/admin/invoices" element={<RequireAdmin><AdminInvoices /></RequireAdmin>} />
           <Route path="/admin/invoices/:invoiceId" element={<RequireAdmin><AdminInvoiceDetail /></RequireAdmin>} />
-          <Route path="/admin/billing-actions" element={<RequireAdmin><AdminBillingActions /></RequireAdmin>} />
           <Route path="/user/profile" element={<Navigate to="/profile" replace />} />
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/user/billings" element={<RequireAuth><BillingPayments /></RequireAuth>} />

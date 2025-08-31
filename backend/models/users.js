@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM(require('../constants/roles').USER, require('../constants/roles').ADMIN),
         defaultValue: require('../constants/roles').USER,
       },
+      photo: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       tableName: "users",

@@ -36,7 +36,7 @@ exports.getUserProfile = async (req, res) => {
     if (!userId) return res.status(401).json({ message: "Not authenticated" });
 
     const user = await User.findByPk(userId, {
-      attributes: ["id", "username", "email", "role"],
+      attributes: ["id", "username", "email", "role", "photo"],
     });
     if (!user) return res.status(404).json({ message: "User not found" });
 

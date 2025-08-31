@@ -94,6 +94,11 @@ function NavBar() {
     .join("")
     .toUpperCase();
 
+  // User photo URL if available
+  const userPhotoUrl = user?.photo
+    ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/uploads/${user.photo}`
+    : null;
+
   return (
     <nav className="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-200/50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -231,9 +236,17 @@ function NavBar() {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                 >
                   <div className="relative">
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                      <span className="text-sm font-semibold text-white">{userInitials}</span>
-                    </div>
+                    {userPhotoUrl ? (
+                      <img
+                        src={userPhotoUrl}
+                        alt="Avatar"
+                        className="h-8 w-8 rounded-full object-cover shadow-lg border border-gray-200"
+                      />
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                        <span className="text-sm font-semibold text-white">{userInitials}</span>
+                      </div>
+                    )}
                     <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-green-400 border-2 border-white rounded-full"></div>
                   </div>
                   <div className="hidden sm:block text-left">
@@ -270,7 +283,7 @@ function NavBar() {
                       <svg className="mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      Sign out
+                      Log out
                     </button>
                   </div>
                 )}
@@ -299,9 +312,17 @@ function NavBar() {
               {user ? (
                 <>
                   <div className="flex items-center px-3 py-4 border-b border-gray-100">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                      <span className="text-sm font-semibold text-white">{userInitials}</span>
-                    </div>
+                    {userPhotoUrl ? (
+                      <img
+                        src={userPhotoUrl}
+                        alt="Avatar"
+                        className="h-10 w-10 rounded-full object-cover shadow-lg border border-gray-200"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                        <span className="text-sm font-semibold text-white">{userInitials}</span>
+                      </div>
+                    )}
                     <div className="ml-3">
                       <div className="text-sm font-medium text-gray-900">{userDisplayName}</div>
                       <div className="text-sm text-gray-500 capitalize">{user.role}</div>
@@ -340,7 +361,7 @@ function NavBar() {
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
                   >
-                    Sign out
+                    Log out
                   </button>
                 </>
               ) : (

@@ -11,7 +11,7 @@ exports.updateUserProfile = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
     user.username = username;
     await user.save();
-    res.json({ id: user.id, username: user.username, email: user.email, role: user.role });
+  res.json({ id: user.id, username: user.username, email: user.email, role: user.role, photo: user.photo });
   } catch (e) {
     res.status(500).json({ message: "Server error" });
   }

@@ -11,11 +11,9 @@ exports.uploadUserPhoto = async (req, res) => {
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Delete old photo if exists and is not the same as the new one
     if (user.photo && user.photo !== req.file.filename) {
       const oldPath = path.join(__dirname, "../uploads", user.photo);
       fs.unlink(oldPath, (err) => {
-        // Ignore error if file doesn't exist
       });
     }
 

@@ -94,7 +94,6 @@ function NavBar() {
     .join("")
     .toUpperCase();
 
-  // User photo URL if available
   const userPhotoUrl = user?.photo
     ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/uploads/${user.photo}`
     : null;

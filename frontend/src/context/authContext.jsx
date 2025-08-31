@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post("/auth/login", { email, password });
       localStorage.setItem('token', res.data.token);
-      // Always fetch latest profile (with photo) after login
       const profileRes = await api.get("/user/profile");
       setUser(profileRes.data);
       return { ...res.data, user: profileRes.data };
@@ -46,7 +45,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post("/auth/signup", { username, email, password });
       localStorage.setItem('token', res.data.token);
-      // Always fetch latest profile (with photo) after signup
       const profileRes = await api.get("/user/profile");
       setUser(profileRes.data);
       return { ...res.data, user: profileRes.data };
@@ -88,7 +86,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Helper: update user context after photo upload
   const refreshUser = async () => {
     try {
       const res = await api.get("/user/profile");

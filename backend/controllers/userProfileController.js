@@ -1,4 +1,3 @@
-// Add this to backend/controllers/userController.js
 const { User } = require("../models");
 
 exports.updateUserProfile = async (req, res) => {

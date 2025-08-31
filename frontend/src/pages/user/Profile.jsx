@@ -41,7 +41,6 @@ export default function Profile() {
     };
     fetchProfile();
   }, []);
-  // Handle photo file selection
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -52,7 +51,6 @@ export default function Profile() {
     }
   };
 
-  // Upload photo to backend
   const handlePhotoUpload = async (e) => {
     e.preventDefault();
     if (!photoFile) return;
@@ -68,9 +66,8 @@ export default function Profile() {
       setPhotoMsg("Photo updated");
       setPhotoErr("");
       setPhotoFile(null);
-      // Update preview to new photo from server
+
       setPhotoPreview(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/uploads/${res.data.photo}`);
-      // Update profileData and context
       setProfileData((prev) => ({ ...prev, photo: res.data.photo }));
       if (typeof refreshUser === 'function') await refreshUser();
     } catch (err) {
@@ -86,7 +83,6 @@ export default function Profile() {
   );
   if (!user && !profileData) return <div className="text-center py-12 text-lg">Not logged in</div>;
 
-  // Fix: Only update local state after successful update
   const handleProfileSave = async (e) => {
     e.preventDefault();
     setMsg(""); setErr("");
@@ -101,7 +97,6 @@ export default function Profile() {
     }
   };
 
-  // Fix: Handle empty response for password change
   const handlePwSave = async (e) => {
     e.preventDefault();
     setPwMsg(""); setPwErr(""); setPwLoading(true);
@@ -121,7 +116,7 @@ export default function Profile() {
       <h2 className="text-2xl font-bold mb-6 border-b pb-2">Profile Settings</h2>
       {msg && <div className="mb-3 text-green-700">{msg}</div>}
       {err && <div className="mb-3 text-red-700">{err}</div>}
-      {/* Photo upload section */}
+
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-6">
         <div className="flex flex-col items-center">
           <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center border border-gray-300">

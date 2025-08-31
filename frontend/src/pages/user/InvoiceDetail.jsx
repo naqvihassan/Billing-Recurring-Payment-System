@@ -103,7 +103,6 @@ export default function UserInvoiceDetail() {
             <th className="px-4 py-2 border">Type</th>
             <th className="px-4 py-2 border">Description</th>
             <th className="px-4 py-2 border">Amount</th>
-            {/* Only show these columns if any line item has units/unitPrice */}
             {invoice.lineItems?.some(item => item.units !== undefined || item.unitPrice !== undefined) && <th className="px-4 py-2 border">Units</th>}
             {invoice.lineItems?.some(item => item.unitPrice !== undefined) && <th className="px-4 py-2 border">Unit Price</th>}
           </tr>

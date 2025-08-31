@@ -1,12 +1,21 @@
 const express = require("express");
+const router = express.Router();
+
 const { getUserProfile } = require("../controllers/userController");
 const authenticate = require("../middleware/authMiddleware");
 const { requireRole } = require("../middleware/authMiddleware");
 const planController = require("../controllers/planController");
 const subscriptionController = require("../controllers/subscriptionController");
 const usageController = require("../controllers/usageController");
+const invoiceApiController = require("../controllers/invoiceApiController");
+const transactionController = require("../controllers/transactionController");
 
-const router = express.Router();
+const billingSummaryController = require("../controllers/billingSummaryController");
+router.get("/billing-summary", authenticate, billingSummaryController.getUserBillingSummary);
+
+router.get("/invoices", authenticate, invoiceApiController.listUserInvoices);
+router.get("/invoices/:invoiceId", authenticate, invoiceApiController.getInvoiceDetails);
+router.get("/transactions", authenticate, transactionController.getUserTransactions);
 
 router.get("/plans", planController.list);
 

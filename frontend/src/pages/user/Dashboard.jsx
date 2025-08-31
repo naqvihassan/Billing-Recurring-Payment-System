@@ -187,68 +187,13 @@ export default function Dashboard() {
       </div>
 
       <div className="bg-white rounded-lg shadow mb-8">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Your Subscriptions</h2>
-            <Link to="/plans" className="btn btn-primary btn-sm">
-              Browse Plans
-            </Link>
-          </div>
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900">Billing & Payments</h2>
+          <Link to="/user/billings" className="btn btn-primary btn-sm">View All</Link>
         </div>
         <div className="p-6">
-          {subscriptions.length === 0 ? (
-            <div className="text-center py-8">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No subscriptions</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Get started by subscribing to a plan.
-              </p>
-              <div className="mt-6">
-                <Link to="/plans" className="btn btn-primary">
-                  View Plans
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {subscriptions.map((subscription) => (
-                <div key={subscription.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {subscription.plan?.name}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        ${subscription.monthly_fee_snapshot}/month • Billing day: {subscription.billing_day}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Next billing: {new Date(subscription.next_billing_date).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        subscription.status === 'active' ? 'bg-green-100 text-green-800' :
-                        subscription.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {subscription.status}
-                      </span>
-                      <div className="mt-2">
-                        <Link
-                          to={`/user/subscriptions/${subscription.id}`}
-                          className="btn-secondary btn-sm"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <p className="text-gray-600 mb-2">View your invoices, payment history, and transactions in one place.</p>
+          {/* Optionally, show a summary or most recent invoice here */}
         </div>
       </div>
 
@@ -305,6 +250,8 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+
     </div>
   );
 }

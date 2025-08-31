@@ -20,6 +20,9 @@ router.get("/transactions", authenticate, transactionController.getUserTransacti
 router.get("/plans", planController.list);
 
 router.get("/profile", authenticate, getUserProfile);
+const { updateUserProfile, changeUserPassword } = require("../controllers/userProfileController");
+router.put("/profile", authenticate, updateUserProfile);
+router.put("/profile/password", authenticate, changeUserPassword);
 router.get("/subscriptions", authenticate, subscriptionController.getUserSubscriptions);
 router.get("/subscriptions/:subscriptionId", authenticate, subscriptionController.getSubscriptionDetails);
 router.get("/subscriptions/:subscriptionId/usage", authenticate, usageController.listBySubscriptionForUser);

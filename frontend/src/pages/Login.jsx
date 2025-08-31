@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { ROLES } from "/src/constants/roles";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -16,7 +17,11 @@ export default function Login() {
     setLoading(true);
     try {
       const result = await login(email, password);
-      navigate("/profile");
+      if (result.user?.role === ROLES.ADMIN) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/user/dashboard");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
     } finally {

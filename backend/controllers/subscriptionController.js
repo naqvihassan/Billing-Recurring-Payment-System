@@ -1,4 +1,5 @@
 const { Subscription, Plan, User } = require("../models");
+const invoiceController = require("./invoiceController");
 
 exports.createSubscription = async (req, res) => {
   try {
@@ -41,6 +42,12 @@ exports.createSubscription = async (req, res) => {
       monthly_fee_snapshot: plan.monthlyFee,
       status: 'active'
     });
+
+      try {
+        await invoiceController.createSubscriptionInvoice(subscription);
+      } catch (err) {
+        console.error("Invoice creation failed:", err);
+      }
 
     const subscriptionWithPlan = await Subscription.findByPk(subscription.id, {
       include: [{ model: Plan, as: 'plan' }]

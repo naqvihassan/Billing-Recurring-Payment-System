@@ -2,6 +2,13 @@
 const express = require("express");
 const router = express.Router();
 
+const billingController = require('../controllers/billingController');
+router.post('/run-billing', billingController.runBillingForDueAccounts);
+
+const invoiceApiController = require("../controllers/invoiceApiController");
+router.get("/invoices", invoiceApiController.listAllInvoices);
+router.get("/invoices/:invoiceId", invoiceApiController.getInvoiceDetails);
+
 const authenticate = require("../middleware/authMiddleware");
 const { requireRole } = require("../middleware/authMiddleware");
 
@@ -10,6 +17,8 @@ const planController = require("../controllers/planController");
 const subscriptionController = require("../controllers/subscriptionController");
 const usageController = require("../controllers/usageController");
 const userController = require("../controllers/userController");
+
+router.patch("/invoices/:invoiceId/status", invoiceApiController.updateInvoiceStatus);
 
 router.use(authenticate);
 const ROLES = require('../constants/roles');

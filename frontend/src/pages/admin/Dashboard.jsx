@@ -9,6 +9,7 @@ export default function Dashboard() {
           <Link to="/admin/features" className="btn-primary">Manage Features</Link>
           <Link to="/admin/plans" className="btn-secondary">Manage Plans</Link>
           <Link to="/admin/subscriptions" className="btn-secondary">View Subscriptions</Link>
+          <Link to="/admin/billing-actions" className="btn-primary">Run Billing</Link>
         </div>
       </div>
     </div>

@@ -12,11 +12,15 @@ router.get("/invoices/:invoiceId", invoiceApiController.getInvoiceDetails);
 const authenticate = require("../middleware/authMiddleware");
 const { requireRole } = require("../middleware/authMiddleware");
 
+
 const featureController = require("../controllers/featureController");
 const planController = require("../controllers/planController");
 const subscriptionController = require("../controllers/subscriptionController");
 const usageController = require("../controllers/usageController");
 const userController = require("../controllers/userController");
+const adminDashboardController = require("../controllers/adminDashboardController");
+
+router.get("/dashboard-stats", adminDashboardController.getDashboardStats);
 
 router.patch("/invoices/:invoiceId/status", invoiceApiController.updateInvoiceStatus);
 

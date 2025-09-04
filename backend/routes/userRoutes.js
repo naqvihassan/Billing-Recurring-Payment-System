@@ -20,6 +20,12 @@ router.get("/transactions", authenticate, transactionController.getUserTransacti
 router.get("/plans", planController.list);
 
 router.get("/profile", authenticate, getUserProfile);
+const { updateUserProfile, changeUserPassword } = require("../controllers/userProfileController");
+const upload = require("../middleware/upload");
+const { uploadUserPhoto } = require("../controllers/userPhotoController");
+router.put("/profile", authenticate, updateUserProfile);
+router.put("/profile/password", authenticate, changeUserPassword);
+router.post("/profile/photo", authenticate, upload.single("photo"), uploadUserPhoto);
 router.get("/subscriptions", authenticate, subscriptionController.getUserSubscriptions);
 router.get("/subscriptions/:subscriptionId", authenticate, subscriptionController.getSubscriptionDetails);
 router.get("/subscriptions/:subscriptionId/usage", authenticate, usageController.listBySubscriptionForUser);

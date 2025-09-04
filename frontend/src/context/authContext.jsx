@@ -27,23 +27,27 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+
   const login = async (email, password) => {
     try {
       const res = await api.post("/auth/login", { email, password });
       localStorage.setItem('token', res.data.token);
-      setUser(res.data.user);
-      return res.data;
+      const profileRes = await api.get("/user/profile");
+      setUser(profileRes.data);
+      return { ...res.data, user: profileRes.data };
     } catch (error) {
       throw error;
     }
   };
 
+
   const signup = async (username, email, password) => {
     try {
       const res = await api.post("/auth/signup", { username, email, password });
       localStorage.setItem('token', res.data.token);
-      setUser(res.data.user);
-      return res.data;
+      const profileRes = await api.get("/user/profile");
+      setUser(profileRes.data);
+      return { ...res.data, user: profileRes.data };
     } catch (error) {
       throw error;
     }
@@ -82,6 +86,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const res = await api.get("/user/profile");
+      setUser(res.data);
+    } catch {}
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -90,7 +101,8 @@ export const AuthProvider = ({ children }) => {
       signup, 
       logout, 
       getProfile,
-      updateProfile 
+      updateProfile,
+      refreshUser
     }}>
       {children}
     </AuthContext.Provider>

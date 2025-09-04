@@ -28,7 +28,6 @@ export default function BillingPayments() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6">Billing & Payments</h2>
-      {/* Summary Card */}
       <div className="bg-white rounded-lg shadow p-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="text-lg font-semibold">Amount Due</div>
@@ -44,7 +43,6 @@ export default function BillingPayments() {
           </div>
         </div>
       </div>
-      {/* Tabs */}
       <div className="mb-6 flex gap-2 border-b">
         <button
           className={`px-4 py-2 font-medium border-b-2 transition-all duration-150 ${tab === "invoices" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-600 hover:text-blue-600"}`}
@@ -59,8 +57,7 @@ export default function BillingPayments() {
           Transactions
         </button>
       </div>
-      {/* Tab Content */}
-      <div>
+     <div>
   {tab === "invoices" && <BillingTabInvoices />}
   {tab === "transactions" && <BillingTabTransactions />}
       </div>

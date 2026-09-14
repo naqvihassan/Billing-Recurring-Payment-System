@@ -26,7 +26,7 @@ exports.signup = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 1000 * 60 * 60 * 24,
-        sameSite: "strict"
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
       })
       .status(201)
       .json({
@@ -35,7 +35,9 @@ exports.signup = async (req, res) => {
         tokenExpiry: 24 * 60 * 60
       });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+  console.error(err);
+  res.status(500).json({ message: "Server error" });
+
   }
 };
 
@@ -56,7 +58,7 @@ exports.login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 1000 * 60 * 60 * 24,
-        sameSite: "strict"
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
       })
       .json({
         message: "Login successful",
@@ -64,7 +66,9 @@ exports.login = async (req, res) => {
         tokenExpiry: 24 * 60 * 60
       });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+  console.error(err);
+  res.status(500).json({ message: "Server error" });
+
   }
 };
 
@@ -73,7 +77,7 @@ exports.logout = async (req, res) => {
     .clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
     })
     .status(200)
